@@ -29,8 +29,8 @@ services:
   #     - "8000:80"
 
   nginx:
-    build: ./nginx
-    image: nginx
+    build: ./nginx #nginxのDockerfileのpath
+    image: nginx #作成するイメージ名
     container_name: "nginx"
     ports:
       - "8080:80" #あとで消す
