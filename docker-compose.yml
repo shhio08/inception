@@ -2,36 +2,38 @@
 # バージョンは指定しなくていい使用になったらしい
 
 services:
-  # db:
-  #   image: mysql:8.3.0 # mysqlのバージョンは適宜変えてください
-  #   volumes:
-  #     - db_data:/var/lib/mysql
-  #   restart: always
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: examplepassword
-  #     MYSQL_DATABASE: wordpress
-  #     MYSQL_USER: wordpress
-  #     MYSQL_PASSWORD: examplepassword
+  db:
+    image: mariadb
+    build: ./srcs/mariadb
+    # volumes:
+    #   - db_data:/var/lib/mysql
+    # restart: always
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: examplepassword
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wordpress
+    #   MYSQL_PASSWORD: examplepassword
 
-  # wordpress:
-  #   # depends_on:
-  #   #   - db
-  #   build: ./wordpress
-  #   image: wordpress
-  #   container_name: "wordpress"
-  #   # volumes:
-  #   #   - ./wordpress:/var/www/html
-  #   restart: always
-  #   # environment:
-  #   #   WORDPRESS_DB_HOST: db:3306
-  #   #   WORDPRESS_DB_USER: wordpress
-  #   #   WORDPRESS_DB_PASSWORD: examplepassword
-  #   #   WORDPRESS_DB_NAME: wordpress
-  #   networks:
-  #     - wordpress #wordpressとnginが同じネットワークに所属するため
+  wordpress:
+    # depends_on:
+    #   - db
+    build: ./srcs/wordpress
+    image: wordpress
+    container_name: "wordpress"
+    volumes:
+     - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
+      - wordpress:/var/www/html
+    # restart: always
+    # environment:
+    #   WORDPRESS_DB_HOST: db:3306
+    #   WORDPRESS_DB_USER: wordpress
+    #   WORDPRESS_DB_PASSWORD: examplepassword
+    #   WORDPRESS_DB_NAME: wordpress
+    networks:
+      - inseptionnet #wordpressとnginが同じネットワークに所属するため
 
   nginx:
-    build: ./nginx #nginxのDockerfileのpath
+    build: ./srcs/nginx #nginxのDockerfileのpath
     image: nginx #作成するイメージ名
     container_name: "nginx"
     ports:
@@ -39,24 +41,22 @@ services:
       - "443:443"
     restart: always #失敗した時に自動的に再起動
     volumes:
-      - ./nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
-    # networks:
-    #   - wordpress
+      - ./srcs/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
+    networks:
+      - inseptionnet
     # depends_on:
     #   - wordpress #wordpressが立ち上がってからnginxを立ち上げる
 
-
-  # nginx:
-  #   image: nginx:latest
-  #   ports:
-  #     - "80:80"
-  #   volumes:
-  #     - ./nginx.conf:/etc/nginx/nginx.conf
-  #   depends_on:
-  #     - wordpress
-
+# nginxもwoedpressのファイルを参照できるようにする
 volumes:
-  db_data:
+  wordpress:
+    name: wordpress
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: ~/Desktop/42tokyo/wordpress-docker/v-wordpres
+
 
 networks:
-  wordpress:
+  inseptionnet:
