@@ -22,7 +22,7 @@ services:
     container_name: "wordpress"
     volumes:
      - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
-      - wordpress:/var/www/html
+     - wordpress:/var/www/html
     # restart: always
     # environment:
     #   WORDPRESS_DB_HOST: db:3306
@@ -55,7 +55,7 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: ~/Desktop/42tokyo/wordpress-docker/v-wordpres
+      device: /Users/takimotoshiho/Desktop/42tokyo/wordpress-docker/v-wordpress/
 
 
 networks:
