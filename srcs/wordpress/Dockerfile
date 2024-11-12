@@ -8,4 +8,12 @@ RUN apt-get update \
 	&& mkdir -p /var/www/html \
 	&& mv /wordpress/* /var/www/html/
 
+RUN mkdir -p /run/php \
+    && touch /run/php/php7.4-fpm.pid \
+    && chmod 755 /run/php/php7.4-fpm.pid
+# RUN service php7.4-fpm start \
+# 	&& service php7.4-fpm stop
+# RUN sleep 3
+
+# CMD ["php-fpm7.4", "-F"]
 ENTRYPOINT ["/bin/sh", "-c", "while :; do sleep 10; done"]

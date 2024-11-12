@@ -23,6 +23,8 @@ services:
     volumes:
      - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
      - wordpress:/var/www/html
+    ports:
+      - "9000:9000"
     # restart: always
     # environment:
     #   WORDPRESS_DB_HOST: db:3306
@@ -42,6 +44,7 @@ services:
     restart: always #失敗した時に自動的に再起動
     volumes:
       - ./srcs/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
+      - wordpress:/var/www/html
     networks:
       - inseptionnet
     # depends_on:
