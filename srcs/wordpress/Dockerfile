@@ -15,5 +15,5 @@ RUN mkdir -p /run/php \
 # 	&& service php7.4-fpm stop
 # RUN sleep 3
 
-# CMD ["php-fpm7.4", "-F"]
-ENTRYPOINT ["/bin/sh", "-c", "while :; do sleep 10; done"]
+CMD ["php-fpm7.4", "-F"]
+# ENTRYPOINT ["/bin/sh", "-c", "while :; do sleep 10; done"]
