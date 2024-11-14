@@ -2,21 +2,19 @@
 # バージョンは指定しなくていい使用になったらしい
 
 services:
-  db:
-    image: mariadb
-    build: ./srcs/mariadb
-    # volumes:
-    #   - db_data:/var/lib/mysql
-    # restart: always
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: examplepassword
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD: examplepassword
+  # db:
+  #   image: mariadb
+  #   build: ./srcs/mariadb
+  #   container_name: "db"
+  #   # volumes:
+  #   #   - db_data:/var/lib/mysql
+  #   restart: always
+  #   networks:
+  #     - inceptionnet
+  #   env_file:
+  #     - .env
 
   wordpress:
-    # depends_on:
-    #   - db
     build: ./srcs/wordpress
     image: wordpress
     container_name: "wordpress"
@@ -25,14 +23,11 @@ services:
      - wordpress:/var/www/html
     # ports:
     #   - "9000:9000"
-    # restart: always
-    # environment:
-    #   WORDPRESS_DB_HOST: db:3306
-    #   WORDPRESS_DB_USER: wordpress
-    #   WORDPRESS_DB_PASSWORD: examplepassword
-    #   WORDPRESS_DB_NAME: wordpress
+    restart: always
     networks:
-      - inseptionnet #wordpressとnginが同じネットワークに所属するため
+      - inceptionnet #wordpressとnginが同じネットワークに所属するため
+    # depends_on:
+    #   - db
 
   nginx:
     build: ./srcs/nginx #nginxのDockerfileのpath
@@ -46,12 +41,19 @@ services:
       - ./srcs/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
       - wordpress:/var/www/html
     networks:
-      - inseptionnet
+      - inceptionnet
     depends_on:
       - wordpress #wordpressが立ち上がってからnginxを立ち上げる
 
 # nginxもwoedpressのファイルを参照できるようにする
 volumes:
+  # db_data:
+  #   name: db_data
+  #   driver: local
+  #   driver_opts:
+  #     o: bind
+  #     type: none
+  #     device: /Users/takimotoshiho/Desktop/42tokyo/wordpress-docker/v-db_data/
   wordpress:
     name: wordpress
     driver: local
@@ -62,4 +64,5 @@ volumes:
 
 
 networks:
-  inseptionnet:
+  inceptionnet:
+    # driver: bridge
