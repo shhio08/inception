@@ -5,34 +5,29 @@ services:
   db:
     image: mariadb
     build: ./srcs/mariadb
+    container_name: "db"
     # volumes:
     #   - db_data:/var/lib/mysql
-    # restart: always
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: examplepassword
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD: examplepassword
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - inceptionnet
 
   wordpress:
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
     build: ./srcs/wordpress
     image: wordpress
     container_name: "wordpress"
     volumes:
-     - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
-     - wordpress:/var/www/html
-    # ports:
-    #   - "9000:9000"
-    # restart: always
-    # environment:
-    #   WORDPRESS_DB_HOST: db:3306
-    #   WORDPRESS_DB_USER: wordpress
-    #   WORDPRESS_DB_PASSWORD: examplepassword
-    #   WORDPRESS_DB_NAME: wordpress
+      - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
+      - wordpress:/var/www/html
+    ports:
+      - "9000:9000"
+    restart: always
     networks:
-      - inseptionnet #wordpressとnginが同じネットワークに所属するため
+      - inceptionnet #wordpressとnginが同じネットワークに所属するため
 
   nginx:
     build: ./srcs/nginx #nginxのDockerfileのpath
@@ -46,7 +41,7 @@ services:
       - ./srcs/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
       - wordpress:/var/www/html
     networks:
-      - inseptionnet
+      - inceptionnet
     depends_on:
       - wordpress #wordpressが立ち上がってからnginxを立ち上げる
 
@@ -62,4 +57,5 @@ volumes:
 
 
 networks:
-  inseptionnet:
+  inceptionnet:
+    driver: bridge
