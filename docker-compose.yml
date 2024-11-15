@@ -2,32 +2,33 @@
 # バージョンは指定しなくていい使用になったらしい
 
 services:
-  # db:
-  #   image: mariadb
-  #   build: ./srcs/mariadb
-  #   container_name: "db"
-  #   # volumes:
-  #   #   - db_data:/var/lib/mysql
-  #   restart: always
-  #   networks:
-  #     - inceptionnet
-  #   env_file:
-  #     - .env
+  db:
+    image: mariadb
+    build: ./srcs/mariadb
+    container_name: "db"
+    # volumes:
+    #   - db_data:/var/lib/mysql
+    restart: always
+    env_file:
+      - .env
+    networks:
+      - inceptionnet
 
   wordpress:
+    depends_on:
+      - db
     build: ./srcs/wordpress
     image: wordpress
     container_name: "wordpress"
     volumes:
-     - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
-     - wordpress:/var/www/html
-    # ports:
-    #   - "9000:9000"
+      - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
+      - wordpress:/var/www/html
+    ports:
+      - "9000:9000"
     restart: always
     networks:
       - inceptionnet #wordpressとnginが同じネットワークに所属するため
-    # depends_on:
-    #   - db
+
 
   nginx:
     build: ./srcs/nginx #nginxのDockerfileのpath
@@ -47,13 +48,6 @@ services:
 
 # nginxもwoedpressのファイルを参照できるようにする
 volumes:
-  # db_data:
-  #   name: db_data
-  #   driver: local
-  #   driver_opts:
-  #     o: bind
-  #     type: none
-  #     device: /Users/takimotoshiho/Desktop/42tokyo/wordpress-docker/v-db_data/
   wordpress:
     name: wordpress
     driver: local
@@ -65,4 +59,4 @@ volumes:
 
 networks:
   inceptionnet:
-    # driver: bridge
+    driver: bridge

@@ -1,24 +1,28 @@
 #!/bin/bash
-
 set -e
 
-if [ -f flg ]; then
-    rm flg
-    mysqld_safe &
-    sleep 2
-    process=$(ps | grep -o "mysqld_safe")
-    if [ "$process" != "mysqld_safe" ]; then
-        exit 500
-    fi
+# 環境変数の確認
+echo "MYSQL_DATABASE: $MYSQL_DATABASE"
+echo "MYSQL_USER: $MYSQL_USER"
+echo "MYSQL_PATHWORD: $MYSQL_PATHWORD"
+echo "MYSQL_ROOT_PATHWORD: $MYSQL_ROOT_PATHWORD"
 
-    echo "CREATE DATABASE $MYSQL_DATABASE ;" > build.sql
-    echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED  BY '$MYSQL_PATHWORD' ;" >> build.sql
-    echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER'@'%' ;" >> build.sql
-    echo "FLUSH PRIVILEGES ;" >> build.sql
-    echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PATHWORD' ;" >> build.sql
+mysqld_safe &
 
-    mysql < build.sql
-    mysqladmin shutdown -uroot -p$MYSQL_ROOT_PATHWORD
-fi
+until mysqladmin ping -h localhost --silent; do
+  echo "Waiting for MariaDB to be ready..."
+  sleep 2
+done
+touch flg
 
-exec mysqld_safe
+echo "Running SQL script..."
+echo "ALTER USER 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PATHWORD' ;" > build.sql
+echo "CREATE DATABASE \`$MYSQL_DATABASE\`;" >> build.sql  # バッククォートに修正
+echo "CREATE USER '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PATHWORD' ;" >> build.sql
+echo "GRANT ALL PRIVILEGES ON \`$MYSQL_DATABASE\`.* TO '$MYSQL_USER'@'%' ;" >> build.sql  # バッククォートに修正
+echo "FLUSH PRIVILEGES ;" >> build.sql
+
+mysql < build.sql
+
+# MariaDB プロセスを前面で実行し続ける
+wait
