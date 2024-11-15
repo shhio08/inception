@@ -29,6 +29,7 @@ services:
     networks:
       - inceptionnet #wordpressとnginが同じネットワークに所属するため
 
+
   nginx:
     build: ./srcs/nginx #nginxのDockerfileのpath
     image: nginx #作成するイメージ名
