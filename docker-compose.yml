@@ -6,29 +6,34 @@ services:
     image: mariadb
     build: ./srcs/mariadb
     container_name: "db"
-    # volumes:
-    #   - db_data:/var/lib/mysql
+    volumes:
+      - db_data:/var/lib/mysql
     restart: always
     env_file:
       - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - inceptionnet
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
 
   wordpress:
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     build: ./srcs/wordpress
     image: wordpress
     container_name: "wordpress"
     volumes:
       - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
       - wordpress:/var/www/html
-    ports:
-      - "9000:9000"
     restart: always
     networks:
       - inceptionnet #wordpressとnginが同じネットワークに所属するため
-
 
   nginx:
     build: ./srcs/nginx #nginxのDockerfileのpath
@@ -54,7 +59,14 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /Users/takimotoshiho/Desktop/42tokyo/wordpress-docker/v-wordpress/
+      device: /Users/takimotoshiho/Desktop/v-wordpress/
+  db_data:
+    name: db_data
+    driver: local
+    driver_opts:
+      o: bind
+      type: none
+      device: /Users/takimotoshiho/Desktop/v-mariadb/
 
 
 networks:
