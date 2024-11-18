@@ -23,7 +23,7 @@ echo "CREATE USER IF NOT EXISTS '$MYSQL_USER'@'%' IDENTIFIED BY '$MYSQL_PASSWORD
 echo "GRANT ALL PRIVILEGES ON \`$MYSQL_DATABASE\`.* TO '$MYSQL_USER'@'%' ;" >> build.sql  # バッククォートに修正
 echo "FLUSH PRIVILEGES ;" >> build.sql
 
-mysql < build.sql
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" < build.sql
 
 # MariaDB プロセスを前面で実行し続ける
 wait

@@ -4,7 +4,7 @@
 services:
   db:
     image: mariadb
-    build: ./srcs/mariadb
+    build: ./requirements/mariadb
     container_name: "db"
     volumes:
       - db_data:/var/lib/mysql
@@ -25,18 +25,18 @@ services:
     depends_on:
       db:
         condition: service_healthy
-    build: ./srcs/wordpress
+    build: ./requirements/wordpress
     image: wordpress
     container_name: "wordpress"
     volumes:
-      - ./srcs/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
+      - ./requirements/wordpress/www.conf:/etc/php/7.4/fpm/pool.d/www.conf
       - wordpress:/var/www/html
     restart: always
     networks:
       - inceptionnet #wordpressとnginが同じネットワークに所属するため
 
   nginx:
-    build: ./srcs/nginx #nginxのDockerfileのpath
+    build: ./requirements/nginx #nginxのDockerfileのpath
     image: nginx #作成するイメージ名
     container_name: "nginx"
     ports:
@@ -44,7 +44,7 @@ services:
       - "443:443"
     restart: always #失敗した時に自動的に再起動
     volumes:
-      - ./srcs/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
+      - ./requirements/nginx/default:/etc/nginx/sites-available/default  #コンフィグファイルをコピー
       - wordpress:/var/www/html
     networks:
       - inceptionnet
