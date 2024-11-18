@@ -1,9 +1,24 @@
 server {
-	#listen 443 default_server; #v4に対応
-	#listen [::]:443 default_server; #v6に対応
+    listen 80;
+    listen [::]:80;
+    server_name stakimot.42.fr;
 
-	listen  80 default_server; #v4に対応
-	listen [::]:80 default_server; #v6に対応
+    # HTTP -> HTTPS リダイレクト
+    return 301 https://localhost:$request_uri;
+}
+
+server {
+	listen 443 ssl;
+	listen [::]:443 ssl; #v6に対応
+	server_name stakimot.42.fr;
+
+	#listen  80 default_server; #v4に対応
+	#listen [::]:80 default_server; #v6に対応
+
+	ssl_certificate /etc/nginx/ssl/crt.pem;
+    ssl_certificate_key /etc/nginx/ssl/privkey.pem;
+
+	ssl_protocols TLSv1.3;
 
 	root /var/www/html;
 	index index.php index.nginx-debian.html;
