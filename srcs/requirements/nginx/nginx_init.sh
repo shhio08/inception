@@ -15,6 +15,18 @@ openssl req -new -key $SSL_DIR/privkey.pem -out $SSL_DIR/csr.pem -subj "/C=jp/ST
 # 証明書の作成
 openssl x509 -req -in $SSL_DIR/csr.pem -signkey $SSL_DIR/privkey.pem -days 90 -out $SSL_DIR/crt.pem || { echo "Failed to create certificate"; exit 1; }
 
+#   cd /etc/nginx/ssl
+#   # 秘密鍵の作成
+#   openssl genrsa -out privkey.pem 2048
+
+#   # 証明書署名要求 (CSR) の作成
+#   openssl req -new -key privkey.pem -out csr.pem \
+#       -subj "/C=JP/ST=Tokyo/L=Chiyoda/O=LocalDev/CN=localhost"
+
+#   # 自己署名証明書の作成 (有効期限 365 日)
+#   openssl x509 -req -days 365 -in csr.pem -signkey privkey.pem -out crt.pem
+
+
 # nginxの設定ファイルをテスト
 # nginx -t || { echo "nginx configuration test failed"; exit 1; }
 
