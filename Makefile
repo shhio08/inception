@@ -15,7 +15,7 @@ clean:
 
 fclean:
 	docker compose -f srcs/docker-compose.yml down --rmi all -v \
-	&& sudo rm -rf /Users/takimotoshiho/data/v-db/* /Users/takimotoshiho/data/v-wordpress/*
+	&& rm -rf /Users/takimotoshiho/data/v-db/* /Users/takimotoshiho/data/v-wordpress/*
 ps:
 	docker compose -f srcs/docker-compose.yml ps
 
