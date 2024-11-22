@@ -14,8 +14,8 @@ RUN apt-get update \
 
 	# wordpressファイル群を適切な場所にダウンロード
 	&& mkdir -p /var/www/html \
-	&& cd /var/www/html \
-	&& wp core download --allow-root
+	# && cd /var/www/html \
+	# && wp core download --allow-root
 
 	# wordpress
 	# && wp config create --dbname=wordpress_db --dbuser=wordpress_user --dbpass=password --dbhost=db --allow-root \

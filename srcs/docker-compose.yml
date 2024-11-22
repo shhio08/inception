@@ -6,8 +6,8 @@ services:
     image: mariadb
     build: ./requirements/mariadb
     container_name: "db"
-    volumes:
-      - db_data:/var/lib/mysql
+    # volumes:
+      # - db_data:/var/lib/mysql
     restart: always
     env_file:
       - .env
@@ -23,6 +23,7 @@ services:
 
   wordpress:
     depends_on:
+      # - db
       db:
         condition: service_healthy
     build: ./requirements/wordpress
@@ -59,14 +60,14 @@ volumes:
     driver_opts:
       o: bind
       type: none
-      device: /Users/takimotoshiho/Desktop/v-wordpress/
+      device: /Users/takimotoshiho/data/v-wordpress/
   db_data:
     name: db_data
     driver: local
     driver_opts:
       o: bind
       type: none
-      device: /Users/takimotoshiho/Desktop/v-mariadb/
+      device: /Users/takimotoshiho/data/v-db/
 
 
 networks:
