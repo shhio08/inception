@@ -8,13 +8,14 @@ else
 fi
 
 if [ ! -f /var/www/html/wp-config.php ]; then
-    wp config create --dbname=wordpress_db --dbuser=wordpress_user --dbpass=password --dbhost=db --allow-root
+    wp config create --dbname=$WORDPRESS_DB_NAME --dbuser=$WORDPRESS_DB_USER --dbpass=$WORDPRESS_DB_PASSWORD --dbhost=$WORDPRESS_DB_HOST --allow-root
 else
     echo "wp-config.php already exists. Skipping config creation."
 fi
 
 if ! wp core is-installed --allow-root; then
-    wp core install --url=https://stakimot.42.fr --title=title --admin_user=admin --admin_password=password --admin_email=admin@test.com --allow-root
+    wp core install --url=$WORDPRESS_URL --title=$WORDPRESS_TITLE --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --allow-root
+    wp user create --url=$WORDPRESS_URL $WORDPRESS_USER_NAME $WORDPRESS_USER_EMAIL --role=$WORDPRESS_USER_ROLE --allow-root
 else
     echo "WordPress is already installed. Skipping installation."
 fi

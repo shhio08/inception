@@ -18,14 +18,18 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     networks:
       - inceptionnet
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+    # healthcheck:
+    #   test: ["CMD-SHELL", "mysql -uuser -ppassword -e 'SELECT 1'"]
+    #   interval: 5s
+    #   timeout: 5s
+    #   retries: 3
+    #   start_period: 60s
 
   wordpress:
     depends_on:
-      # - db
-      db:
-        condition: service_healthy
+      - db
+    #   db:
+    #     condition: service_healthy
     build: ./requirements/wordpress
     image: wordpress
     container_name: "wordpress"
@@ -35,13 +39,15 @@ services:
     restart: always
     networks:
       - inceptionnet #wordpressとnginが同じネットワークに所属するため
+    env_file:
+      - .env
 
   nginx:
     build: ./requirements/nginx #nginxのDockerfileのpath
     image: nginx #作成するイメージ名
-    container_name: "nginx"
+    container_name: "nginx" #コンテナ名
     ports:
-      - "80:80" #あとで消す
+      # - "80:80" #あとで消す
       - "443:443"
     restart: always #失敗した時に自動的に再起動
     volumes:

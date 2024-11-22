@@ -14,12 +14,6 @@ RUN apt-get update \
 
 	# wordpressファイル群を適切な場所にダウンロード
 	&& mkdir -p /var/www/html \
-	# && cd /var/www/html \
-	# && wp core download --allow-root
-
-	# wordpress
-	# && wp config create --dbname=wordpress_db --dbuser=wordpress_user --dbpass=password --dbhost=db --allow-root \
-	# && wp core install --url=localhost --title=title --admin_user=admin --admin_password=password --admin_email=admin@test.com --allow-root
 
 RUN mkdir -p /run/php \
     && touch /run/php/php7.4-fpm.pid \
@@ -29,8 +23,6 @@ RUN mkdir -p /run/php \
 
 COPY wordpress_init.sh /
 RUN chmod +x /wordpress_init.sh
-
-# CMD ["php-fpm7.4", "-F"]
 
 # EXPOSE 9000/tcp
 ENTRYPOINT ["/wordpress_init.sh"]
