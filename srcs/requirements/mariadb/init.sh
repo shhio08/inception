@@ -1,10 +1,6 @@
 #!/bin/bash
 # set -e
 
-
-# echo "installing mariadb-server..."
-# apt-get install -y mariadb-server
-
 echo "change bind-address..."
 sed -i 's/^bind-address\s*=\s*127\.0\.0\.1/bind-address = 0.0.0.0/' /etc/mysql/mariadb.conf.d/50-server.cnf
 
@@ -14,6 +10,12 @@ sed -i 's/^bind-address\s*=\s*127\.0\.0\.1/bind-address = 0.0.0.0/' /etc/mysql/m
 # chown -R mysql:mysql /run/mysqld/
 
 
+if [ ! -d "/var/lib/mysql/mysql" ]; then
+  echo "Initializing MariaDB data directory..."
+  mysql_install_db --user=mysql --datadir=/var/lib/mysql
+else
+  echo "MariaDB data directory already initialized. Skipping initialization."
+fi
 mysqld_safe &
 
 
@@ -21,16 +23,6 @@ until mysqladmin ping -h localhost --silent; do
   echo "Waiting for MariaDB to be ready..."
   sleep 2
 done
-
-
-
-# if ! mysqladmin ping -h localhost --silent; then
-#     echo "Error: MariaDB failed to start"
-#     exit 1
-# fi
-
-# service mariadb start
-# sleep 5
 
 echo "Running SQL script..."
 # echo "SET PASSWORD FOR 'root'@'localhost'= PASSWORD('${MYSQL_ROOT_PASSWORD}') ;" > build.sql

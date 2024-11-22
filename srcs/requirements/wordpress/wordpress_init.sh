@@ -12,6 +12,11 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 else
     echo "wp-config.php already exists. Skipping config creation."
 fi
-wp core install --url=https://stakimot.42.fr --title=title --admin_user=admin --admin_password=password --admin_email=admin@test.com --allow-root
+
+if ! wp core is-installed --allow-root; then
+    wp core install --url=https://stakimot.42.fr --title=title --admin_user=admin --admin_password=password --admin_email=admin@test.com --allow-root
+else
+    echo "WordPress is already installed. Skipping installation."
+fi
 
 exec php-fpm7.4 -F

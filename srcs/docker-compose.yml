@@ -6,8 +6,8 @@ services:
     image: mariadb
     build: ./requirements/mariadb
     container_name: "db"
-    # volumes:
-      # - db_data:/var/lib/mysql
+    volumes:
+      - db_data:/var/lib/mysql
     restart: always
     env_file:
       - .env
