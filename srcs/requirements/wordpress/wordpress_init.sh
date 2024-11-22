@@ -15,7 +15,8 @@ fi
 
 if ! wp core is-installed --allow-root; then
     wp core install --url=$WORDPRESS_URL --title=$WORDPRESS_TITLE --admin_user=$WORDPRESS_ADMIN_USER --admin_password=$WORDPRESS_ADMIN_PASSWORD --admin_email=$WORDPRESS_ADMIN_EMAIL --allow-root
-    wp user create --url=$WORDPRESS_URL $WORDPRESS_USER_NAME $WORDPRESS_USER_EMAIL --role=$WORDPRESS_USER_ROLE --allow-root
+    wp user create --url=$WORDPRESS_URL $WORDPRESS_USER_NAME $WORDPRESS_USER_EMAIL --user_pass=$WORDPRESS_USER_PASSWORD --role=$WORDPRESS_USER_ROLE --allow-root
+
 else
     echo "WordPress is already installed. Skipping installation."
 fi
